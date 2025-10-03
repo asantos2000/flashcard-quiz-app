@@ -1,6 +1,60 @@
 # 🎓 Gerador de Flashcards e Quiz com IA
 
-Uma aplicação web moderna que utiliza Inteligência Artificial para transformar documentos em material de estudo interativo, incluindo flashcards e quizzes de múltipla escolha.
+Uma aplicação web moderna que utiliza Inteligência Artificial para transformar documentos em material de estudo interativo, in# 4. Inicie o servidor
+npm run dev
+```
+
+Acesse [http://localhost:3000](http://localhost:3000) e comece a usar! 🚀
+
+---
+
+## 🌐 Deploy Rápido (5 minutos)
+
+Quer colocar sua aplicação **online agora**? Siga este guia super rápido:
+
+### 🚀 Deploy em 3 Comandos (Vercel)
+
+```bash
+# 1. Instale a CLI da Vercel
+npm i -g vercel
+
+# 2. Faça login (abre o navegador)
+vercel login
+
+# 3. Deploy!
+vercel --prod
+```
+
+Durante o deploy, quando perguntado:
+- ❓ **"Set up and deploy?"** → `Y`
+- ❓ **"Which scope?"** → Escolha sua conta
+- ❓ **"Link to existing project?"** → `N`
+- ❓ **"What's your project's name?"** → `flashcard-quiz-app`
+- ❓ **"In which directory is your code located?"** → `./`
+
+Depois configure a chave OpenAI no dashboar## 🛠️ Desenvolvido Com
+
+Esta aplicação foi desenvolvida utilizando as seguintes ferramentas e assistentes de IA:
+
+- **[Visual Studio Code](https://code.visualstudio.com/)** - Editor de código
+- **[GitHub Copilot](https://github.com/features/copilot)** - Assistente de código com IA
+- **[Claude Sonnet 4.5 (Preview)](https://www.anthropic.com/claude/sonnet)** - Assistente de IA da Anthropic
+
+> 💡 **Nota**: O rodapé da aplicação exibe as tecnologias de IA utilizadas (CopilotKit + GPT-4o) e as ferramentas de desenvolvimento para reconhecer tudo que tornou o desenvolvimento mais eficiente.
+
+## 📝 Licençacom/dashboard](https://vercel.com/dashboard)
+
+✅ **Pronto!** Sua aplicação estará em `https://flashcard-quiz-app.vercel.app`
+
+> 📘 **Precisa de mais detalhes?** Veja:
+> - [Seção completa de Deploy](#-deploy) abaixo
+> - [Guia visual passo a passo](./DEPLOY-GUIDE.md) com screenshots e troubleshooting
+
+---
+
+## 📦 Instalação e Configuração
+
+### Passo 1: Clonar o Repositóriolashcards e quizzes de múltipla escolha.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=flat-square&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
@@ -27,12 +81,14 @@ Uma aplicação web moderna que utiliza Inteligência Artificial para transforma
 - [Tecnologias Utilizadas](#tecnologias-utilizadas)
 - [Pré-requisitos](#pré-requisitos)
 - [Início Rápido](#início-rápido)
+- [Deploy Rápido (5 minutos)](#-deploy-rápido-5-minutos)
 - [Instalação e Configuração](#instalação-e-configuração)
 - [Como Usar](#como-usar)
 - [Perguntas Frequentes (FAQ)](#perguntas-frequentes-faq)
 - [Estrutura do Projeto](#estrutura-do-projeto)
 - [Scripts Disponíveis](#scripts-disponíveis)
-- [Deploy](#deploy)
+- [Deploy (Guia Completo)](#-deploy)
+  - [📘 Guia Visual Passo a Passo](./DEPLOY-GUIDE.md)
 - [Segurança](#segurança)
 - [Solução de Problemas](#solução-de-problemas)
 - [Contribuindo](#contribuindo)
@@ -84,14 +140,16 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
 
 ### 💾 Sessões Salvas
 - **Salvamento automático** de todos os flashcards e quizzes gerados
+- **Persistência com DuckDB** - Banco de dados embutido, rápido e eficiente
 - **Sidebar com histórico** mostrando todas as sessões salvas
-- **Persistência de dados** usando localStorage (dados não são perdidos ao fechar o navegador)
 - **Carregamento rápido** de sessões anteriores com um clique
 - **Gestão de sessões**: Visualize e delete sessões antigas
+- **Sem limite de tamanho** - Diferente do localStorage (5-10MB)
 - Informações exibidas:
   - Nome do arquivo original
   - Número de flashcards e quizzes
-  - Data da última atualização
+  - Data de criação e última atualização
+  - Ordenação por data mais recente
 
 ### 🤖 Assistente IA Integrado
 - Chat interativo com CopilotKit (self-hosted)
@@ -99,6 +157,16 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
 - Comandos em linguagem natural
 - Interface amigável em português
 - **Sem necessidade de licença CopilotKit** - 100% self-hosted
+
+### ❓ Sistema de Ajuda Integrado
+- **Botão de ajuda** com ícone de interrogação no cabeçalho
+- **Modal explicativo** com instruções detalhadas
+- Guia passo a passo de todas as funcionalidades
+- Dicas úteis para melhor aproveitamento da aplicação
+- Interface intuitiva com ícones e exemplos visuais
+- **Fechar com ESC** - Pressione a tecla ESC para fechar o modal rapidamente
+- **Fechar clicando fora** - Clique no overlay (fundo escuro) para fechar
+- Previne scroll da página quando o modal está aberto
 
 ## 🛠️ Tecnologias Utilizadas
 
@@ -116,12 +184,17 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
   - `@copilotkit/react-ui` - Componentes de UI
   - `@copilotkit/runtime` - Runtime para API
 - **[OpenAI API](https://openai.com/)** - Modelos de linguagem (GPT-4o, GPT-4, GPT-3.5)
+- **[DuckDB](https://duckdb.org/)** - Banco de dados analítico embutido para persistência
 
 > 💡 **Nota**: Esta aplicação usa CopilotKit em modo **self-hosted**, o que significa que você não precisa de uma licença ou conta CopilotKit. Apenas sua chave de API OpenAI é necessária!
 
 ### Persistência e Armazenamento
-- **localStorage** - Salvamento local de sessões no navegador
+- **DuckDB** - Banco de dados embutido, rápido e eficiente
+- **API Routes** - Endpoints REST para gerenciar sessões (`/api/sessions`)
 - **Auto-save** - Sistema automático de salvamento de flashcards e quizzes
+- **Backup simples** - Arquivo único `study-sessions.db`
+
+> 📘 **Migração do localStorage**: Se você estava usando a versão anterior, veja [DUCKDB-MIGRATION.md](./DUCKDB-MIGRATION.md) para detalhes sobre a mudança.
 
 ### Ferramentas de Desenvolvimento
 - **[ESLint](https://eslint.org/)** - Linter para JavaScript
@@ -282,12 +355,24 @@ Após carregar o documento, você tem três opções:
 - O documento, flashcards e quizzes serão carregados instantaneamente
 - A sessão ativa fica destacada em roxo
 
-#### Deletar Sessão
-- Clique em **"Deletar"** abaixo de cada sessão
+#### Excluir Sessão
+- Clique em **"Excluir"** abaixo de cada sessão
 - Confirme a exclusão
 - A sessão será removida permanentemente
 
-### Passo 6: Recomeçar
+### Passo 6: Obter Ajuda
+
+- Clique no **botão de ajuda** (ícone de interrogação) no canto superior direito
+- Um modal explicativo será aberto com:
+  - Instruções passo a passo de como usar a aplicação
+  - Explicação de cada funcionalidade (upload, geração, flashcards, quiz, sessões)
+  - Dicas úteis para melhor aproveitamento
+- Para fechar o modal, você pode:
+  - Clicar no **X** no canto superior direito
+  - Pressionar a tecla **ESC** do teclado
+  - Clicar fora do modal (no fundo escuro)
+
+### Passo 7: Recomeçar
 
 - Clique no botão **"Recomeçar"** (ícone de lixeira) no topo
 - Limpa o estado atual e permite carregar um novo documento
@@ -430,24 +515,320 @@ npm run lint
 
 ## 🚢 Deploy
 
-### Vercel (Recomendado)
+Esta seção apresenta as melhores opções **gratuitas** para fazer deploy da sua aplicação e deixá-la acessível na internet. Todas as opções abaixo oferecem planos gratuitos adequados para provas de conceito.
 
-A forma mais fácil de fazer deploy é usando a [Vercel](https://vercel.com/):
+> 📚 **Recursos Complementares**:
+> - ⚡ [Deploy Rápido (5 minutos)](./QUICKSTART-DEPLOY.md) - Guia ultra-rápido para colocar online agora
+> - 📖 [Guia Visual de Deploy Passo a Passo](./DEPLOY-GUIDE.md) - Tutorial completo com troubleshooting
+> - ⚖️ [Comparação Detalhada de Plataformas](./PLATFORM-COMPARISON.md) - Tabela comparativa e recomendações
+> - ✅ [Checklist de Deploy](./DEPLOY-CHECKLIST.md) - Lista de verificação completa para deploy perfeito
 
-1. Faça push do código para GitHub/GitLab/Bitbucket
-2. Importe o projeto na Vercel
-3. Configure a variável de ambiente `OPENAI_API_KEY`
-4. Deploy automático!
+---
 
+### 🎯 Qual guia seguir?
+
+| Seu Perfil | Guia Recomendado | Tempo |
+|------------|------------------|-------|
+| 🏃 Tenho pressa! | [Deploy Rápido](./QUICKSTART-DEPLOY.md) | 5 min |
+| 🎓 Primeira vez | [Guia Visual Passo a Passo](./DEPLOY-GUIDE.md) | 10 min |
+| 🤔 Qual plataforma escolher? | [Comparação de Plataformas](./PLATFORM-COMPARISON.md) | Leitura |
+| ✅ Quero garantir tudo | [Checklist Completa](./DEPLOY-CHECKLIST.md) | 15-30 min |
+| 💻 Já sei o que fazer | Continue abaixo ↓ | - |
+
+---
+
+## 🌟 Opção 1: Vercel (Recomendado - 100% Gratuito)
+
+**⭐ Melhor escolha para aplicações Next.js!**
+
+A [Vercel](https://vercel.com/) é a plataforma criada pelos desenvolvedores do Next.js e oferece:
+
+### ✨ Benefícios do Plano Gratuito (Hobby)
+- ✅ **Deploy ilimitado** de projetos Next.js
+- ✅ **SSL/HTTPS automático** (certificado grátis)
+- ✅ **Domínio gratuito**: `seu-projeto.vercel.app`
+- ✅ **100GB de largura de banda/mês**
+- ✅ **Deploy automático** a cada push no GitHub
+- ✅ **Preview de branches** (ideal para testar antes de publicar)
+- ✅ **Variáveis de ambiente** protegidas
+- ✅ **Serverless Functions** incluídas (suas API routes funcionam perfeitamente)
+- ✅ **Edge Network global** (CDN rápido em todo o mundo)
+
+### 📋 Passo a Passo para Deploy na Vercel
+
+#### 1️⃣ Prepare o Repositório
+```bash
+# Se ainda não fez, inicialize o git
+git init
+git add .
+git commit -m "Initial commit"
+
+# Crie um repositório no GitHub e faça push
+git remote add origin https://github.com/seu-usuario/flashcard-quiz-app.git
+git branch -M main
+git push -u origin main
+```
+
+#### 2️⃣ Deploy na Vercel
+
+**Opção A: Via Interface Web (Mais Fácil)**
+1. Acesse [vercel.com](https://vercel.com/) e faça login com GitHub
+2. Clique em **"Add New Project"**
+3. Selecione seu repositório `flashcard-quiz-app`
+4. Configure as variáveis de ambiente:
+   - Clique em **"Environment Variables"**
+   - Adicione `OPENAI_API_KEY` com sua chave da OpenAI
+   - Opcionalmente adicione `OPENAI_MODEL` (padrão: `gpt-4o`)
+5. Clique em **"Deploy"**
+6. Aguarde 2-3 minutos ⏱️
+7. 🎉 **Pronto!** Sua aplicação estará em `https://seu-projeto.vercel.app`
+
+**Opção B: Via CLI (Mais Rápido)**
+```bash
+# Instale a CLI da Vercel
+npm i -g vercel
+
+# Faça login
+vercel login
+
+# Deploy (primeira vez)
+vercel
+
+# Siga as instruções e configure as variáveis de ambiente
+# quando solicitado
+
+# Depois que configurar, para novos deploys:
+vercel --prod
+```
+
+#### 3️⃣ Configurar Variáveis de Ambiente na Vercel
+
+No dashboard da Vercel:
+1. Vá em **Settings** → **Environment Variables**
+2. Adicione:
+   - `OPENAI_API_KEY`: Sua chave da OpenAI
+   - `OPENAI_MODEL`: `gpt-4o` (opcional, já tem padrão)
+3. Selecione todos os ambientes: **Production**, **Preview**, **Development**
+4. Clique em **"Save"**
+
+#### 4️⃣ Deploy Automático
+A partir de agora, cada push para o branch `main` fará deploy automático! 🚀
+
+### 🔗 Deploy com Um Clique
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/seu-usuario/flashcard-quiz-app)
 
-### Outras Plataformas
+---
 
-- **Netlify**: Configure o comando de build como `npm run build` e o diretório como `.next`
-- **Railway**: Adicione as variáveis de ambiente e faça deploy direto do GitHub
-- **AWS / DigitalOcean**: Use Docker ou deploy manual com PM2
+## 🎯 Opção 2: Netlify (100% Gratuito)
 
-> ⚠️ **Lembre-se**: Configure as variáveis de ambiente em todas as plataformas!
+[Netlify](https://www.netlify.com/) é outra excelente opção gratuita.
+
+### ✨ Benefícios do Plano Gratuito
+- ✅ **100GB de largura de banda/mês**
+- ✅ **300 minutos de build/mês**
+- ✅ **Deploy ilimitado**
+- ✅ **SSL/HTTPS automático**
+- ✅ **Domínio gratuito**: `seu-projeto.netlify.app`
+
+### 📋 Passo a Passo para Deploy na Netlify
+
+```bash
+# 1. Instale a CLI da Netlify
+npm install -g netlify-cli
+
+# 2. Faça login
+netlify login
+
+# 3. Inicialize o projeto
+netlify init
+
+# 4. Configure:
+# - Build command: npm run build
+# - Publish directory: .next
+# - Functions directory: (deixe vazio)
+
+# 5. Deploy
+netlify deploy --prod
+```
+
+**Ou via Interface Web:**
+1. Acesse [app.netlify.com](https://app.netlify.com/)
+2. Conecte seu repositório GitHub
+3. Configure:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `.next`
+4. Adicione variável de ambiente `OPENAI_API_KEY` em **Site settings** → **Environment variables**
+5. Deploy! 🚀
+
+---
+
+## 🚂 Opção 3: Railway (Grátis com $5 de crédito/mês)
+
+[Railway](https://railway.app/) oferece $5 de crédito gratuito por mês, suficiente para pequenos projetos.
+
+### ✨ Benefícios
+- ✅ **$5 de crédito/mês** (renova automaticamente)
+- ✅ **Deploy direto do GitHub**
+- ✅ **Suporte nativo a Next.js**
+- ✅ **SSL automático**
+- ✅ **Variáveis de ambiente protegidas**
+
+### 📋 Passo a Passo
+
+1. Acesse [railway.app](https://railway.app/)
+2. Faça login com GitHub
+3. Clique em **"New Project"** → **"Deploy from GitHub repo"**
+4. Selecione seu repositório
+5. Railway detecta automaticamente Next.js
+6. Adicione variável de ambiente:
+   - Vá em **Variables**
+   - Adicione `OPENAI_API_KEY`
+7. Deploy automático! 🎉
+
+---
+
+## 🎨 Opção 4: Render (Gratuito com Limitações)
+
+[Render](https://render.com/) oferece um plano gratuito com algumas limitações.
+
+### ✨ Benefícios do Plano Gratuito
+- ✅ **Hospedagem gratuita** de aplicações web
+- ✅ **SSL automático**
+- ✅ **Deploy automático do GitHub**
+- ⚠️ **Limitação**: Aplicação "hiberna" após 15 min de inatividade (demora ~30s para "acordar")
+
+### 📋 Passo a Passo
+
+1. Acesse [render.com](https://render.com/)
+2. Conecte com GitHub
+3. Clique em **"New +"** → **"Web Service"**
+4. Selecione seu repositório
+5. Configure:
+   - **Name**: flashcard-quiz-app
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+6. Adicione variável de ambiente `OPENAI_API_KEY`
+7. Selecione o plano **Free**
+8. Clique em **"Create Web Service"**
+
+> ⚠️ **Nota**: No plano gratuito, a primeira requisição após período de inatividade pode demorar ~30 segundos.
+
+---
+
+## 📱 Opção 5: GitHub Pages (NÃO Recomendado para este projeto)
+
+⚠️ **Não funciona bem com Next.js** porque:
+- GitHub Pages é para sites estáticos
+- Next.js precisa de API routes (serverless functions)
+- Suas rotas `/api/*` não funcionarão
+
+**Use apenas se**: Converter para Static Site Generation (SSG) e mover API para outro serviço.
+
+---
+
+## 🏆 Comparação das Plataformas Gratuitas
+
+| Plataforma | Custo | Largura de Banda | Deploy Auto | SSL | Melhor Para |
+|------------|-------|------------------|-------------|-----|-------------|
+| **Vercel** ⭐ | R$ 0 | 100GB/mês | ✅ | ✅ | Next.js (Recomendado) |
+| **Netlify** | R$ 0 | 100GB/mês | ✅ | ✅ | Alternativa sólida |
+| **Railway** | R$ 0 ($5 crédito) | Incluso no crédito | ✅ | ✅ | Projetos pequenos |
+| **Render** | R$ 0 | Sem limite* | ✅ | ✅ | OK (mas hiberna) |
+
+\* Com limitação de hibernação após inatividade
+
+---
+
+## 🎯 Recomendação Final
+
+### Para sua Prova de Conceito:
+
+**🥇 1ª Escolha: Vercel**
+- Perfeita para Next.js
+- Mais rápida e confiável
+- 100% gratuito sem limitações significativas
+- Deploy em minutos
+
+**🥈 2ª Escolha: Netlify**
+- Ótima alternativa à Vercel
+- Também 100% gratuito
+- Interface amigável
+
+**🥉 3ª Escolha: Railway**
+- Boa para testes
+- $5/mês gratuito é suficiente para POC
+- Renovação automática do crédito
+
+---
+
+## 🔧 Configurações Importantes para Produção
+
+Independente da plataforma escolhida:
+
+### ✅ Variáveis de Ambiente Obrigatórias
+```bash
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxx
+OPENAI_MODEL=gpt-4o  # Opcional, padrão já definido
+```
+
+### ✅ Checklist Pré-Deploy
+- [ ] `.env.local` está no `.gitignore` (não suba sua chave!)
+- [ ] Teste localmente com `npm run build && npm start`
+- [ ] Confirme que `/api/copilotkit` funciona localmente
+- [ ] Verifique se o PDF upload funciona
+- [ ] Confirme que as variáveis de ambiente estão configuradas na plataforma
+
+### ✅ Após o Deploy
+1. Teste o upload de um PDF
+2. Teste a geração de flashcards
+3. Teste a geração de quiz
+4. Verifique o chat do CopilotKit
+5. Teste salvar/carregar sessões
+
+### ⚠️ Monitoramento de Custos OpenAI
+
+Após o deploy, monitore seu uso da API OpenAI:
+1. Acesse [platform.openai.com/usage](https://platform.openai.com/usage)
+2. Configure alertas de limite de gastos
+3. Para POC, recomendo limite de $10-20/mês
+
+**Estimativa de custo** (GPT-4o):
+- Cada flashcard gerado: ~$0.01-0.02
+- Cada quiz gerado: ~$0.01-0.02
+- Para 100 gerações: ~$1-2
+- Para POC com poucos usuários: **< $5/mês**
+
+---
+
+## 🎉 Deploy Concluído!
+
+Depois de seguir os passos acima, sua aplicação estará disponível publicamente em:
+- Vercel: `https://seu-projeto.vercel.app`
+- Netlify: `https://seu-projeto.netlify.app`
+- Railway: `https://seu-projeto.up.railway.app`
+- Render: `https://seu-projeto.onrender.com`
+
+Compartilhe o link e deixe as pessoas testarem sua aplicação de flashcards com IA! 🚀
+
+---
+
+## 🌐 Domínio Customizado (Opcional)
+
+Se quiser usar seu próprio domínio:
+
+### Vercel
+1. Compre um domínio (sugestões: Namecheap, Google Domains, Registro.br)
+2. Na Vercel: **Settings** → **Domains** → **Add**
+3. Adicione seu domínio (ex: `meuapp.com`)
+4. Configure os DNS records conforme instruções
+5. Aguarde propagação (até 48h)
+
+### Custo
+- Domínio `.com`: ~R$ 40-60/ano
+- Domínio `.com.br`: ~R$ 40/ano (Registro.br)
+- **Hospedagem**: R$ 0 (grátis na Vercel/Netlify)
+
+> 💡 **Dica**: Para POC, use o domínio gratuito fornecido pela plataforma. Só compre domínio customizado se for apresentar para clientes ou usar em produção real.
 
 ## 🔒 Segurança
 
@@ -523,7 +904,17 @@ Contribuições são bem-vindas! Para contribuir:
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
-## 📝 Licença
+## �️ Desenvolvido Com
+
+Esta aplicação foi desenvolvida utilizando as seguintes ferramentas e assistentes de IA:
+
+- **[Visual Studio Code](https://code.visualstudio.com/)** - Editor de código
+- **[GitHub Copilot](https://github.com/features/copilot)** - Assistente de código com IA
+- **[Claude 3.5 Sonnet](https://www.anthropic.com/claude)** - Assistente de IA da Anthropic
+
+> 💡 **Nota**: O rodapé da aplicação exibe estes créditos para reconhecer as ferramentas que tornaram o desenvolvimento mais eficiente.
+
+## �📝 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 

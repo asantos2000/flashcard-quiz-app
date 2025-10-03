@@ -3,16 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_NO_WARNINGS=1 next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:db": "node test-duckdb.mjs",
+    "migrate:db": "node migrate-db.mjs"
   },
   "dependencies": {
     "@copilotkit/react-core": "^1.10.5",
     "@copilotkit/react-ui": "^1.10.5",
     "@copilotkit/runtime": "^1.10.5",
     "autoprefixer": "^10.4.21",
+    "duckdb": "^1.4.0",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.11.0",
     "next": "15.5.4",
@@ -27,6 +30,7 @@
     "@tailwindcss/postcss": "^4.1.14",
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
+    "ignore-loader": "^0.1.2",
     "tailwindcss": "^4"
   }
 }

@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Upload, BookOpen, Brain, Trash2, ChevronLeft, ChevronRight, Check, X, Save, FolderOpen, Calendar } from 'lucide-react';
+import { Upload, BookOpen, Brain, Trash2, ChevronLeft, ChevronRight, Check, X, Save, FolderOpen, Calendar, HelpCircle } from 'lucide-react';
 import * as mammoth from 'mammoth';
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 
-function FlashcardApp() {
+function FlashcardApp({ onDocumentChange }) {
   const [file, setFile] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [flashcards, setFlashcards] = useState([]);
@@ -20,45 +20,97 @@ function FlashcardApp() {
   const [savedSessions, setSavedSessions] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(null);
   const [isClient, setIsClient] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   // Ensure we're on the client side before accessing localStorage
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Load saved sessions from localStorage on mount
+  // Notify parent component when file changes
+  useEffect(() => {
+    if (onDocumentChange) {
+      onDocumentChange(file?.name || null);
+    }
+  }, [file, onDocumentChange]);
+
+  // Load saved sessions from DuckDB on mount
   useEffect(() => {
     if (isClient && typeof window !== 'undefined') {
-      const saved = localStorage.getItem('flashcard-sessions');
-      if (saved) {
-        try {
-          setSavedSessions(JSON.parse(saved));
-        } catch (error) {
-          console.error('Error loading saved sessions:', error);
-        }
-      }
+      loadSavedSessions();
     }
   }, [isClient]);
 
-  // Save session to localStorage
-  const saveSession = (sessionData) => {
-    const sessions = [...savedSessions];
-    const existingIndex = sessions.findIndex(s => s.id === sessionData.id);
-    
-    if (existingIndex >= 0) {
-      sessions[existingIndex] = sessionData;
-    } else {
-      sessions.push(sessionData);
+  // Fetch sessions from API
+  const loadSavedSessions = async () => {
+    try {
+      const response = await fetch('/api/sessions');
+      const data = await response.json();
+      if (data.sessions) {
+        setSavedSessions(data.sessions);
+      }
+    } catch (error) {
+      console.error('Error loading saved sessions:', error);
     }
-    
-    setSavedSessions(sessions);
-    localStorage.setItem('flashcard-sessions', JSON.stringify(sessions));
+  };
+
+  // Close modal with ESC key
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && showHelp) {
+        setShowHelp(false);
+      }
+    };
+
+    if (showHelp) {
+      document.addEventListener('keydown', handleEscape);
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'unset';
+    };
+  }, [showHelp]);
+
+  // Save session to DuckDB via API
+  const saveSession = async (sessionData) => {
+    try {
+      const response = await fetch('/api/sessions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(sessionData),
+      });
+      
+      const data = await response.json();
+      if (data.session) {
+        // Update local state
+        const sessions = [...savedSessions];
+        const existingIndex = sessions.findIndex(s => s.id === sessionData.id);
+        
+        if (existingIndex >= 0) {
+          sessions[existingIndex] = data.session;
+        } else {
+          sessions.push(data.session);
+        }
+        
+        setSavedSessions(sessions);
+      }
+    } catch (error) {
+      console.error('Error saving session:', error);
+    }
   };
 
   // Auto-save when flashcards or quiz are generated
   useEffect(() => {
     if (file && extractedText && (flashcards.length > 0 || quiz.length > 0)) {
       const sessionId = currentSessionId || `session-${Date.now()}`;
+      // Find existing session to preserve createdAt
+      const existingSession = savedSessions.find(s => s.id === sessionId);
+      
       const sessionData = {
         id: sessionId,
         fileName: file.name,
@@ -66,7 +118,7 @@ function FlashcardApp() {
         extractedText: extractedText,
         flashcards: flashcards,
         quiz: quiz,
-        createdAt: currentSessionId ? savedSessions.find(s => s.id === sessionId)?.createdAt : new Date().toISOString(),
+        createdAt: existingSession?.createdAt || new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
       
@@ -89,14 +141,23 @@ function FlashcardApp() {
     setShowResults(false);
   };
 
-  // Delete a saved session
-  const deleteSession = (sessionId) => {
-    const sessions = savedSessions.filter(s => s.id !== sessionId);
-    setSavedSessions(sessions);
-    localStorage.setItem('flashcard-sessions', JSON.stringify(sessions));
-    
-    if (currentSessionId === sessionId) {
-      resetApp();
+  // Delete a saved session from DuckDB via API
+  const deleteSession = async (sessionId) => {
+    try {
+      const response = await fetch(`/api/sessions?id=${sessionId}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        const sessions = savedSessions.filter(s => s.id !== sessionId);
+        setSavedSessions(sessions);
+        
+        if (currentSessionId === sessionId) {
+          resetApp();
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting session:', error);
     }
   };
 
@@ -333,8 +394,8 @@ function FlashcardApp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 flex flex-col">
+      <div className="max-w-6xl mx-auto flex-grow">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
           {/* Sidebar - Saved Sessions */}
           <div className="lg:col-span-1 bg-white rounded-2xl shadow-xl p-4 max-h-screen overflow-y-auto">
@@ -374,21 +435,32 @@ function FlashcardApp() {
                         <Brain className="w-3 h-3 ml-1" />
                         <span>{session.quiz?.length || 0} quiz</span>
                       </div>
-                      <div className="flex items-center text-xs text-gray-400 mt-1">
-                        <Calendar className="w-3 h-3 mr-1" />
-                        {new Date(session.updatedAt).toLocaleDateString('pt-BR')}
-                      </div>
+                      {isClient && (
+                        <div className="flex items-center text-xs text-gray-400 mt-1">
+                          <Calendar className="w-3 h-3 mr-1" />
+                          {new Date(session.updatedAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          })}
+                          {' '}
+                          {new Date(session.updatedAt).toLocaleTimeString('pt-BR', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        if (confirm('Deseja deletar esta sessão?')) {
+                        if (confirm('Deseja excluir esta sessão permanentemente?')) {
                           deleteSession(session.id);
                         }
                       }}
                       className="mt-2 w-full text-xs text-red-600 hover:text-red-800 py-1"
                     >
-                      Deletar
+                      Excluir
                     </button>
                   </div>
                 ))}
@@ -406,14 +478,34 @@ function FlashcardApp() {
                 <h1 className="text-3xl font-bold mb-2">Gerador de Flashcards e Quiz com IA</h1>
                 <p className="text-purple-100">Faça upload de um documento e gere conteúdo de estudo automaticamente</p>
               </div>
-              {file && (
+              <div className="flex gap-2">
                 <button
-                  onClick={resetApp}
+                  onClick={() => setShowHelp(true)}
                   className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition-colors"
+                  title="Ajuda"
                 >
-                  <Trash2 className="w-5 h-5" />
+                  <HelpCircle className="w-5 h-5" />
                 </button>
-              )}
+                {file && (
+                  <button
+                    onClick={() => {
+                      if (currentSessionId) {
+                        // Se há uma sessão carregada, perguntar se quer excluí-la
+                        if (confirm('Deseja excluir esta sessão permanentemente?')) {
+                          deleteSession(currentSessionId);
+                        }
+                      } else {
+                        // Se não há sessão salva, apenas resetar
+                        resetApp();
+                      }
+                    }}
+                    className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition-colors"
+                    title={currentSessionId ? "Excluir sessão" : "Recomeçar"}
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -725,12 +817,6 @@ function FlashcardApp() {
             )}
           </div>
         </div>
-
-        {/* Info Footer */}
-        <div className="mt-6 text-center text-sm text-gray-600">
-          <p>💡 Esta é uma aplicação de exemplo usando conceitos do CopilotKit</p>
-          <p className="mt-1">Em produção, conecte com a API real do CopilotKit e um LLM como GPT-4 ou Claude</p>
-        </div>
           </div>
         </div>
       </div>
@@ -749,6 +835,186 @@ function FlashcardApp() {
           transform: rotateY(180deg);
         }
       `}</style>
+
+      {/* Help Modal */}
+      {showHelp && (
+        <div 
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowHelp(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">Como Usar a Aplicação</h2>
+                <button
+                  onClick={() => setShowHelp(false)}
+                  className="hover:bg-white/20 p-2 rounded-lg transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Upload Section */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-purple-100 p-3 rounded-lg">
+                    <Upload className="w-6 h-6 text-purple-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">1. Upload de Documento</h3>
+                  <p className="text-gray-600">
+                    Faça upload de um arquivo PDF, DOCX ou TXT contendo o conteúdo que você deseja estudar. 
+                    A aplicação irá extrair o texto automaticamente.
+                  </p>
+                </div>
+              </div>
+
+              {/* Generation Section */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-blue-100 p-3 rounded-lg">
+                    <Brain className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">2. Geração com IA</h3>
+                  <p className="text-gray-600 mb-2">
+                    Após o upload, você pode gerar:
+                  </p>
+                  <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
+                    <li><strong>Flashcards:</strong> Cartões de estudo com perguntas e respostas</li>
+                    <li><strong>Quiz:</strong> Questões de múltipla escolha para testar seus conhecimentos</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Flashcards Section */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-green-100 p-3 rounded-lg">
+                    <BookOpen className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">3. Estudar com Flashcards</h3>
+                  <p className="text-gray-600">
+                    Clique nos flashcards para revelar a resposta. Use as setas para navegar entre os cartões. 
+                    Ideal para memorização e revisão rápida.
+                  </p>
+                </div>
+              </div>
+
+              {/* Quiz Section */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-orange-100 p-3 rounded-lg">
+                    <Check className="w-6 h-6 text-orange-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">4. Responder Quiz</h3>
+                  <p className="text-gray-600">
+                    Selecione as respostas clicando nas opções. Após responder todas as questões, 
+                    clique em "Ver Resultados" para conferir seu desempenho.
+                  </p>
+                </div>
+              </div>
+
+              {/* Save Session Section */}
+              <div className="flex gap-4">
+                <div className="flex-shrink-0">
+                  <div className="bg-indigo-100 p-3 rounded-lg">
+                    <Save className="w-6 h-6 text-indigo-600" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">5. Salvar Sessões</h3>
+                  <p className="text-gray-600">
+                    Clique em "Salvar Sessão" para guardar seu progresso. As sessões salvas aparecem 
+                    no menu lateral e podem ser carregadas a qualquer momento. Use o botão de lixeira 
+                    para excluir sessões.
+                  </p>
+                </div>
+              </div>
+
+              {/* Tips Section */}
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4 border-2 border-purple-200">
+                <h3 className="font-bold text-lg text-gray-800 mb-2">💡 Dicas</h3>
+                <ul className="list-disc list-inside text-gray-600 space-y-1 ml-2">
+                  <li>Use documentos com conteúdo bem estruturado para melhores resultados</li>
+                  <li>Os flashcards são ideais para conceitos e definições</li>
+                  <li>Os quizzes são perfeitos para testar compreensão</li>
+                  <li>Suas sessões são salvas no navegador e persistem entre visitas</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      <footer className="mt-8 pt-6 pb-4 border-t border-white/30">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 flex-wrap text-sm text-gray-600">
+            <span>Esta aplicação utiliza o</span>
+            <a 
+              href="https://www.copilotkit.ai/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-purple-600 hover:text-purple-800 transition-colors"
+              title="CopilotKit"
+            >
+              CopilotKit
+            </a>
+            <span>conectada à API do</span>
+            <a 
+              href="https://openai.com/index/gpt-4/"
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-green-600 hover:text-green-800 transition-colors"
+              title="GPT-4o"
+            >
+              GPT-4o
+            </a>
+            <span>• Desenvolvido em</span>
+            <a 
+              href="https://code.visualstudio.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+              title="Visual Studio Code"
+            >
+              VS Code
+            </a>
+            <span>com</span>
+            <a 
+              href="https://github.com/features/copilot" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-purple-600 hover:text-purple-800 transition-colors"
+              title="GitHub Copilot"
+            >
+              GitHub Copilot
+            </a>
+            <span>e</span>
+            <a 
+              href="https://www.anthropic.com/claude/sonnet" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="font-semibold text-orange-600 hover:text-orange-800 transition-colors"
+              title="Claude Sonnet 4.5 (Preview)"
+            >
+              Claude Sonnet 4.5
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

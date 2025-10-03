@@ -33,6 +33,13 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# database files
+study-sessions.db
+study-sessions.db.wal
+flashcards.db
+flashcards.db.wal
+*.duckdb
+
 # vercel
 .vercel
 
