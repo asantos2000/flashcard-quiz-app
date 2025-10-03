@@ -14,13 +14,18 @@ const __dirname = path.dirname(__filename);
 
 // Ler DATABASE_URL do .env.local ou usar default
 const envPath = path.join(__dirname, '..', '.env.local');
-let DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/flashcards';
+let DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/study_sessions';
 
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');
-  const match = envContent.match(/DATABASE_URL=(.+)/);
-  if (match) {
-    DATABASE_URL = match[1].trim();
+  // Procura por DATABASE_URL que não está comentada (sem #)
+  const lines = envContent.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('DATABASE_URL=') && !trimmed.startsWith('#')) {
+      DATABASE_URL = trimmed.replace('DATABASE_URL=', '').trim();
+      break;
+    }
   }
 }
 

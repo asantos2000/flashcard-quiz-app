@@ -1,19 +1,23 @@
 # 🌐 Deploy na Netlify
 
-## ⚠️ Aviso Importante: DuckDB e Netlify
+## ⚠️ Aviso Importante: PostgreSQL Necessário
 
 A **Netlify é uma plataforma serverless** sem filesystem persistente. Isso significa:
 
 ❌ **O que NÃO funciona:**
-- Persistência de sessões com DuckDB entre deploys
-- Salvamento permanente de dados no arquivo `study-sessions.db`
+- Banco de dados local (PostgreSQL via Docker)
+- Persistência de sessões sem banco externo
+
+✅ **Solução:**
+- Use PostgreSQL externo (Neon, Supabase, Railway)
+- Configure `DATABASE_URL` nas variáveis de ambiente
 
 ✅ **O que FUNCIONA perfeitamente:**
 - Upload de documentos
 - Geração de flashcards com IA
 - Geração de quiz com IA
 - Todas as funcionalidades interativas
-- As sessões funcionam **durante a sessão atual** (armazenadas em memória)
+- Persistência de sessões (com PostgreSQL externo)
 
 ## 🚀 Deploy Rápido na Netlify
 
@@ -30,6 +34,7 @@ A **Netlify é uma plataforma serverless** sem filesystem persistente. Isso sign
    - **Environment variables**: 
      - `OPENAI_API_KEY`: sua chave OpenAI
      - `OPENAI_MODEL`: `gpt-4o`
+     - `DATABASE_URL`: sua connection string PostgreSQL (veja abaixo)
 7. **Deploy!**
 
 ### Via Netlify CLI
@@ -47,6 +52,7 @@ netlify init
 # 4. Configurar variáveis de ambiente
 netlify env:set OPENAI_API_KEY "sk-sua-chave-aqui"
 netlify env:set OPENAI_MODEL "gpt-4o"
+netlify env:set DATABASE_URL "postgresql://user:pass@host/database"
 
 # 5. Deploy
 netlify deploy --prod
@@ -59,9 +65,12 @@ No dashboard da Netlify (Site settings → Environment variables):
 ```env
 OPENAI_API_KEY=sk-sua-chave-openai-aqui
 OPENAI_MODEL=gpt-4o
+DATABASE_URL=postgresql://user:password@host:port/database
 ```
 
-## 📝 Checklist de Deploy
+## � Configurar PostgreSQL para Produção (OBRIGATÓRIO)
+
+Escolha uma das opções abaixo para ter persistência de dados:
 
 - [ ] Criar conta na Netlify
 - [ ] Conectar repositório GitHub
@@ -92,23 +101,13 @@ Se você precisa de persistência de sessões, considere estas alternativas:
 - 💰 ~$5/mês
 - 📚 Ver [DEPLOY-GUIDE.md](./DEPLOY-GUIDE.md)
 
-## 🔄 Migrar de DuckDB para PostgreSQL
+## � Troubleshooting
 
-Se você quiser migrar para PostgreSQL no futuro, precisará:
-
-1. Instalar driver PostgreSQL:
-   ```bash
-   npm install pg
-   ```
-
-2. Atualizar `lib/db.js` para usar PostgreSQL
-3. Criar schema equivalente no PostgreSQL
-4. Migrar dados existentes
-
-## 🐛 Troubleshooting
-
-### Erro: "duckdb module not found"
-**Solução**: Normal na Netlify serverless. As sessões funcionarão em memória durante a execução.
+### Erro: "Failed to connect to database"
+**Solução**: 
+1. Verifique se `DATABASE_URL` está configurada corretamente
+2. Teste a conexão localmente: `DATABASE_URL="..." npm run db:init`
+3. Verifique se o banco está acessível publicamente
 
 ### Erro: "OPENAI_API_KEY is not set"
 **Solução**: 
@@ -128,6 +127,7 @@ netlify logs
 ## 📊 Custos
 
 - **Netlify**: Free tier (100GB bandwidth, 300 build minutes)
+- **PostgreSQL (Neon/Supabase)**: Free tier (500MB database)
 - **OpenAI API**: Pay-as-you-go
   - GPT-4o: ~$0.01 por sessão de uso
   - GPT-3.5-turbo: ~$0.001 por sessão

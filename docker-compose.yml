@@ -1,14 +1,16 @@
 version: '3.8'
 
+name: study-sessions
+
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: flashcard-postgres
+    container_name: study-sessions-postgres
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: flashcards
+      POSTGRES_DB: study_sessions
     ports:
       - "5432:5432"
     volumes:
@@ -22,7 +24,7 @@ services:
   # Opcional: Interface web para gerenciar o banco
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: flashcard-pgadmin
+    container_name: study-sessions-pgadmin
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com

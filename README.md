@@ -5,14 +5,14 @@
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=for-the-badge&logo=tailwind-css)
-![DuckDB](https://img.shields.io/badge/DuckDB-1.4.0-ffc107?style=for-the-badge)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql)
 ![CopilotKit](https://img.shields.io/badge/CopilotKit-Self--Hosted-7c3aed?style=for-the-badge)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=for-the-badge&logo=openai)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 **Uma aplicação web moderna que utiliza Inteligência Artificial para transformar documentos em material de estudo interativo.**
 
-[🚀 Quick Start](#-instalação-e-configuração) • [📖 Documentação](#-sobre-o-projeto) • [🌐 Deploy](#-deploy) • [💾 DuckDB](./DUCKDB-MIGRATION.md)
+[🚀 Quick Start](#-instalação-e-configuração) • [📖 Documentação](#-sobre-o-projeto) • [🌐 Deploy](#-deploy) • [💾 Database](./db/README.md)
 
 </div>
 
@@ -23,7 +23,7 @@
 - ✅ **100% Self-Hosted** - Sem necessidade de licença CopilotKit
 - 🤖 **IA Poderosa** - Integração com GPT-4o, GPT-4 e GPT-3.5
 - 📄 **Múltiplos Formatos** - Suporte para PDF, DOCX e TXT
-- 💾 **Persistência DuckDB** - Banco de dados rápido e eficiente
+- 💾 **Persistência PostgreSQL** - Banco de dados robusto e escalável
 - 📂 **Gerenciamento de Sessões** - Acesse e gerencie seus estudos anteriores
 - 🎨 **Interface Moderna** - Design responsivo com Tailwind CSS v4
 - 💬 **Chat Inteligente** - Assistente IA em português
@@ -59,18 +59,32 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
 
 ### 🏗️ Arquitetura
 
-```
-┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
-│   Browser   │────────▶│   Next.js App    │────────▶│  OpenAI API │
-│  (Frontend) │         │  (Self-Hosted)   │         │  (GPT-4o)   │
-└─────────────┘         └──────────────────┘         └─────────────┘
-                                │
-                                ├─ CopilotKit Runtime
-                                ├─ API Routes (/api/copilotkit)
-                                └─ React Components
+```mermaid
+graph LR
+    A[🌐 Browser<br/>Frontend] -->|HTTP/WebSocket| B[⚡ Next.js App<br/>Self-Hosted]
+    B -->|API Calls| C[🤖 OpenAI API<br/>GPT-4o]
+    B -->|SQL Queries| D[🗄️ PostgreSQL<br/>Database]
+    
+    subgraph "Next.js Application"
+        B
+        E[CopilotKit Runtime]
+        F[API Routes]
+        G[React Components]
+        H[Server Actions]
+    end
+    
+    B -.-> E
+    B -.-> F
+    B -.-> G
+    B -.-> H
+    
+    style A fill:#61dafb,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#000,stroke:#333,stroke-width:3px,color:#fff
+    style C fill:#412991,stroke:#333,stroke-width:2px,color:#fff
+    style D fill:#336791,stroke:#333,stroke-width:2px,color:#fff
 ```
 
-**Sem servidores externos**: Tudo roda na sua máquina ou servidor, usando apenas a API OpenAI para processamento de IA.
+**Sem servidores externos**: Tudo roda na sua máquina ou servidor, usando apenas a API OpenAI para processamento de IA e PostgreSQL para persistência.
 
 ## ✨ Funcionalidades
 
@@ -95,8 +109,9 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
 - **Auto-save**: Quizzes são salvos automaticamente
 
 ### 💾 Sessões Salvas
+- **Nova Sessão** - Botão para iniciar uma nova sessão do zero
 - **Salvamento automático** de todos os flashcards e quizzes gerados
-- **Persistência com DuckDB** - Banco de dados embutido, rápido e eficiente
+- **Persistência com PostgreSQL** - Banco de dados robusto e escalável
 - **Sidebar com histórico** mostrando todas as sessões salvas
 - **Carregamento rápido** de sessões anteriores com um clique
 - **Gestão de sessões**: Visualize e delete sessões antigas
@@ -140,17 +155,17 @@ Esta aplicação permite que estudantes e profissionais transformem seus documen
   - `@copilotkit/react-ui` - Componentes de UI
   - `@copilotkit/runtime` - Runtime para API
 - **[OpenAI API](https://openai.com/)** - Modelos de linguagem (GPT-4o, GPT-4, GPT-3.5)
-- **[DuckDB](https://duckdb.org/)** - Banco de dados analítico embutido para persistência
+- **[PostgreSQL 16](https://www.postgresql.org/)** - Banco de dados relacional robusto e escalável
+- **[node-postgres (pg)](https://node-postgres.com/)** - Driver PostgreSQL para Node.js
 
 > 💡 **Nota**: Esta aplicação usa CopilotKit em modo **self-hosted**, o que significa que você não precisa de uma licença ou conta CopilotKit. Apenas sua chave de API OpenAI é necessária!
 
 ### Persistência e Armazenamento
-- **DuckDB** - Banco de dados embutido, rápido e eficiente
+- **PostgreSQL** - Banco de dados robusto com suporte a JSONB
+- **Docker Compose** - Ambiente PostgreSQL local para desenvolvimento
 - **API Routes** - Endpoints REST para gerenciar sessões (`/api/sessions`)
 - **Auto-save** - Sistema automático de salvamento de flashcards e quizzes
-- **Backup simples** - Arquivo único `study-sessions.db`
-
-> 📘 **Migração do localStorage**: Se você estava usando a versão anterior, veja [DUCKDB-MIGRATION.md](./DUCKDB-MIGRATION.md) para detalhes sobre a mudança.
+- **Connection Pooling** - Gerenciamento eficiente de conexões com o banco
 
 ### Ferramentas de Desenvolvimento
 - **[ESLint](https://eslint.org/)** - Linter para JavaScript
@@ -181,11 +196,16 @@ cd flashcard-quiz-app
 # 2. Instale as dependências
 npm install
 
-# 3. Configure a chave OpenAI
+# 3. Configure o banco de dados PostgreSQL
+docker compose up -d
+npm run db:init
+
+# 4. Configure a chave OpenAI
 echo "OPENAI_API_KEY=sk-sua-chave-aqui" > .env.local
 echo "OPENAI_MODEL=gpt-4o" >> .env.local
+echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/study_sessions" >> .env.local
 
-# 4. Inicie o servidor
+# 5. Inicie o servidor
 npm run dev
 ```
 
@@ -229,12 +249,18 @@ OPENAI_API_KEY=sk-seu-token-openai-aqui
 # Modelo a ser usado (opcional, padrão: gpt-4o)
 # Opções: gpt-4o, gpt-4, gpt-3.5-turbo
 OPENAI_MODEL=gpt-4o
+
+# Database URL (obrigatório)
+# Local: postgresql://postgres:postgres@localhost:5432/study_sessions
+# Produção: use Neon, Supabase ou outro serviço PostgreSQL
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/study_sessions
 ```
 
 > ⚠️ **Importante**: 
 > - Nunca compartilhe ou faça commit do arquivo `.env.local` em repositórios públicos!
 > - Obtenha sua chave de API em: https://platform.openai.com/api-keys
 > - Esta aplicação usa **self-hosted CopilotKit**, você só precisa da chave OpenAI (sem necessidade de licença CopilotKit)
+> - Para desenvolvimento local, use Docker Compose para rodar o PostgreSQL
 
 #### 💰 Modelos e Custos OpenAI
 
@@ -246,7 +272,26 @@ OPENAI_MODEL=gpt-4o
 
 Para desenvolvimento/testes, use `gpt-3.5-turbo`. Para produção, use `gpt-4o`.
 
-### 4. Inicie o Servidor de Desenvolvimento
+### 4. Configure o Banco de Dados PostgreSQL
+
+Para desenvolvimento local, use Docker Compose:
+
+```bash
+# Inicie o PostgreSQL e PgAdmin
+docker compose up -d
+
+# Inicialize o banco de dados com o schema
+npm run db:init
+
+# Acesse PgAdmin (opcional)
+# URL: http://localhost:5050
+# Email: admin@admin.com
+# Senha: admin
+```
+
+> 📘 **Para produção (Netlify/Vercel)**: Use serviços gerenciados de PostgreSQL como [Neon](https://neon.tech/), [Supabase](https://supabase.com/) ou [Railway](https://railway.app/). Veja [NETLIFY-DEPLOY.md](./NETLIFY-DEPLOY.md) para mais detalhes.
+
+### 5. Inicie o Servidor de Desenvolvimento
 
 ```bash
 npm run dev
@@ -471,29 +516,53 @@ npm run lint
 
 ## 🚢 Deploy
 
-Esta seção apresenta as melhores opções **gratuitas** para fazer deploy da sua aplicação e deixá-la acessível na internet. Todas as opções abaixo oferecem planos gratuitos adequados para provas de conceito.
+Esta aplicação está pronta para deploy na **Netlify** com **PostgreSQL** externo (Neon, Supabase, ou Railway).
 
-> 📚 **Recursos Complementares**:
-> - ⚡ [Deploy Rápido (5 minutos)](./QUICKSTART-DEPLOY.md) - Guia ultra-rápido para colocar online agora
-> - 📖 [Guia Visual de Deploy Passo a Passo](./DEPLOY-GUIDE.md) - Tutorial completo com troubleshooting
-> - ⚖️ [Comparação Detalhada de Plataformas](./PLATFORM-COMPARISON.md) - Tabela comparativa e recomendações
-> - ✅ [Checklist de Deploy](./DEPLOY-CHECKLIST.md) - Lista de verificação completa para deploy perfeito
+> 📚 **Guias de Deploy**:
+> - 🚀 **[Deploy em Produção - Guia Rápido](./DEPLOY-PRODUCTION.md)** - Passo a passo completo (15 min)
+> - 📖 [Deploy Netlify - Guia Detalhado](./NETLIFY-DEPLOY.md) - Todas as opções e troubleshooting
+> - ✅ [Checklist de Deploy Netlify](./DEPLOY-CHECKLIST-NETLIFY.md) - Verifique cada etapa
+> - 💾 [Guia do Banco de Dados](./db/README.md) - PostgreSQL local e produção
 
 ---
 
 ### 🎯 Qual guia seguir?
 
-| Seu Perfil | Guia Recomendado | Tempo |
+| Seu Objetivo | Guia Recomendado | Tempo |
 |------------|------------------|-------|
-| 🏃 Tenho pressa! | [Deploy Rápido](./QUICKSTART-DEPLOY.md) | 5 min |
-| 🎓 Primeira vez | [Guia Visual Passo a Passo](./DEPLOY-GUIDE.md) | 10 min |
-| 🤔 Qual plataforma escolher? | [Comparação de Plataformas](./PLATFORM-COMPARISON.md) | Leitura |
-| ✅ Quero garantir tudo | [Checklist Completa](./DEPLOY-CHECKLIST.md) | 15-30 min |
-| 💻 Já sei o que fazer | Continue abaixo ↓ | - |
+| 🚀 Deploy agora! | **[Deploy em Produção](./DEPLOY-PRODUCTION.md)** | 15 min |
+| 📖 Entender todas opções | [Netlify Deploy Detalhado](./NETLIFY-DEPLOY.md) | 20 min |
+| ✅ Verificar tudo antes | [Checklist Completa](./DEPLOY-CHECKLIST-NETLIFY.md) | 30 min |
+| 🗄️ Configurar banco | [Guia de Database](./db/README.md) | 10 min |
 
 ---
 
-## 🌟 Opção 1: Vercel (Recomendado - 100% Gratuito)
+### ⚡ Deploy Rápido (Resumo)
+
+1. **Banco PostgreSQL** (escolha um):
+   - **Neon** ⭐ - https://neon.tech (Free, serverless)
+   - **Supabase** - https://supabase.com (Free, com UI)
+   - **Railway** - https://railway.app ($5 crédito)
+
+2. **Inicializar Schema**:
+   ```bash
+   DATABASE_URL="postgresql://..." npm run db:init
+   ```
+
+3. **Deploy na Netlify**:
+   - Acesse: https://app.netlify.com
+   - Import from GitHub
+   - Configure env vars:
+     - `OPENAI_API_KEY`
+     - `OPENAI_MODEL` = `gpt-4o`
+     - `DATABASE_URL`
+   - Deploy!
+
+📖 **[Guia Completo](./DEPLOY-PRODUCTION.md)** com prints e troubleshooting
+
+---
+
+## 🌟 Alternativas de Deploy
 
 **⭐ Melhor escolha para aplicações Next.js!**
 

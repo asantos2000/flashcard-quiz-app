@@ -17,7 +17,7 @@ const __dirname = path.dirname(__filename);
 const DUCKDB_PATH = path.join(__dirname, '..', 'study-sessions.db');
 const envPath = path.join(__dirname, '..', '.env.local');
 
-let DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/flashcards';
+let DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/study_sessions';
 
 if (fs.existsSync(envPath)) {
   const envContent = fs.readFileSync(envPath, 'utf-8');

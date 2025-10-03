@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllSessions, upsertSession, deleteSession } from '@/lib/db-adapter';
+import { getAllSessions, upsertSession, deleteSession } from '@/lib/db';
 
 // GET all sessions
 export async function GET() {

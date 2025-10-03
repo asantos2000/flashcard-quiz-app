@@ -7,8 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:db": "node test-duckdb.mjs",
-    "migrate:db": "node migrate-db.mjs",
     "db:init": "node db/init.mjs",
     "db:migrate": "node db/migrate-to-postgres.mjs",
     "db:setup": "npm run db:init && npm run db:migrate"
@@ -18,7 +16,6 @@
     "@copilotkit/react-ui": "^1.10.5",
     "@copilotkit/runtime": "^1.10.5",
     "autoprefixer": "^10.4.21",
-    "duckdb": "^1.4.0",
     "lucide-react": "^0.544.0",
     "mammoth": "^1.11.0",
     "next": "15.5.4",

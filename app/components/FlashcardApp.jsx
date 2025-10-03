@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Upload, BookOpen, Brain, Trash2, ChevronLeft, ChevronRight, Check, X, Save, FolderOpen, Calendar, HelpCircle } from 'lucide-react';
+import { Upload, BookOpen, Brain, Trash2, ChevronLeft, ChevronRight, Check, X, Save, FolderOpen, Calendar, HelpCircle, FilePlus } from 'lucide-react';
 import * as mammoth from 'mammoth';
 import { useCopilotAction, useCopilotReadable } from "@copilotkit/react-core";
 
@@ -393,6 +393,17 @@ function FlashcardApp({ onDocumentChange }) {
     setCurrentSessionId(null);
   };
 
+  // Start a new session (clear everything)
+  const startNewSession = () => {
+    if (file || flashcards.length > 0 || quiz.length > 0) {
+      if (confirm('Deseja iniciar uma nova sessão? Os dados não salvos serão perdidos.')) {
+        resetApp();
+      }
+    } else {
+      resetApp();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 p-4 flex flex-col">
       <div className="max-w-6xl mx-auto flex-grow">
@@ -479,6 +490,13 @@ function FlashcardApp({ onDocumentChange }) {
                 <p className="text-purple-100">Faça upload de um documento e gere conteúdo de estudo automaticamente</p>
               </div>
               <div className="flex gap-2">
+                <button
+                  onClick={startNewSession}
+                  className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition-colors"
+                  title="Nova Sessão"
+                >
+                  <FilePlus className="w-5 h-5" />
+                </button>
                 <button
                   onClick={() => setShowHelp(true)}
                   className="bg-white/20 hover:bg-white/30 p-3 rounded-lg transition-colors"
