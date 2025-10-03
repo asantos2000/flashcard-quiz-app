@@ -1,73 +1,29 @@
 # 🎓 Gerador de Flashcards e Quiz com IA
 
-Uma aplicação web moderna que utiliza Inteligência Artificial para transformar documentos em material de estudo interativo, in# 4. Inicie o servidor
-npm run dev
-```
+<div align="center">
 
-Acesse [http://localhost:3000](http://localhost:3000) e comece a usar! 🚀
+![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=for-the-badge&logo=next.js)
+![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=for-the-badge&logo=tailwind-css)
+![DuckDB](https://img.shields.io/badge/DuckDB-1.4.0-ffc107?style=for-the-badge)
+![CopilotKit](https://img.shields.io/badge/CopilotKit-Self--Hosted-7c3aed?style=for-the-badge)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=for-the-badge&logo=openai)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
----
+**Uma aplicação web moderna que utiliza Inteligência Artificial para transformar documentos em material de estudo interativo.**
 
-## 🌐 Deploy Rápido (5 minutos)
+[🚀 Quick Start](#-instalação-e-configuração) • [📖 Documentação](#-sobre-o-projeto) • [🌐 Deploy](#-deploy) • [💾 DuckDB](./DUCKDB-MIGRATION.md)
 
-Quer colocar sua aplicação **online agora**? Siga este guia super rápido:
-
-### 🚀 Deploy em 3 Comandos (Vercel)
-
-```bash
-# 1. Instale a CLI da Vercel
-npm i -g vercel
-
-# 2. Faça login (abre o navegador)
-vercel login
-
-# 3. Deploy!
-vercel --prod
-```
-
-Durante o deploy, quando perguntado:
-- ❓ **"Set up and deploy?"** → `Y`
-- ❓ **"Which scope?"** → Escolha sua conta
-- ❓ **"Link to existing project?"** → `N`
-- ❓ **"What's your project's name?"** → `flashcard-quiz-app`
-- ❓ **"In which directory is your code located?"** → `./`
-
-Depois configure a chave OpenAI no dashboar## 🛠️ Desenvolvido Com
-
-Esta aplicação foi desenvolvida utilizando as seguintes ferramentas e assistentes de IA:
-
-- **[Visual Studio Code](https://code.visualstudio.com/)** - Editor de código
-- **[GitHub Copilot](https://github.com/features/copilot)** - Assistente de código com IA
-- **[Claude Sonnet 4.5 (Preview)](https://www.anthropic.com/claude/sonnet)** - Assistente de IA da Anthropic
-
-> 💡 **Nota**: O rodapé da aplicação exibe as tecnologias de IA utilizadas (CopilotKit + GPT-4o) e as ferramentas de desenvolvimento para reconhecer tudo que tornou o desenvolvimento mais eficiente.
-
-## 📝 Licençacom/dashboard](https://vercel.com/dashboard)
-
-✅ **Pronto!** Sua aplicação estará em `https://flashcard-quiz-app.vercel.app`
-
-> 📘 **Precisa de mais detalhes?** Veja:
-> - [Seção completa de Deploy](#-deploy) abaixo
-> - [Guia visual passo a passo](./DEPLOY-GUIDE.md) com screenshots e troubleshooting
+</div>
 
 ---
-
-## 📦 Instalação e Configuração
-
-### Passo 1: Clonar o Repositóriolashcards e quizzes de múltipla escolha.
-
-![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=flat-square&logo=next.js)
-![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwind-css)
-![CopilotKit](https://img.shields.io/badge/CopilotKit-Self--Hosted-purple?style=flat-square)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o-412991?style=flat-square&logo=openai)
 
 ## 🌟 Destaques
 
 - ✅ **100% Self-Hosted** - Sem necessidade de licença CopilotKit
 - 🤖 **IA Poderosa** - Integração com GPT-4o, GPT-4 e GPT-3.5
 - 📄 **Múltiplos Formatos** - Suporte para PDF, DOCX e TXT
-- 💾 **Auto-Save** - Salva automaticamente todas as sessões no navegador
+- 💾 **Persistência DuckDB** - Banco de dados rápido e eficiente
 - 📂 **Gerenciamento de Sessões** - Acesse e gerencie seus estudos anteriores
 - 🎨 **Interface Moderna** - Design responsivo com Tailwind CSS v4
 - 💬 **Chat Inteligente** - Assistente IA em português
