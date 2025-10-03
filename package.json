@@ -11,7 +11,9 @@
     "db:migrate": "node db/migrate-to-postgres.mjs",
     "db:setup": "npm run db:init && npm run db:migrate",
     "version": "node scripts/version.mjs",
-    "version:git": "node scripts/version.mjs --git"
+    "version:git": "node scripts/version.mjs --git",
+    "tag": "node scripts/tag-release.mjs",
+    "release": "npm run version && npm run tag"
   },
   "dependencies": {
     "@copilotkit/react-core": "^1.10.5",
