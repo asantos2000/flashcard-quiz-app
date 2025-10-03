@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "eslint",
     "test:db": "node test-duckdb.mjs",
-    "migrate:db": "node migrate-db.mjs"
+    "migrate:db": "node migrate-db.mjs",
+    "db:init": "node db/init.mjs",
+    "db:migrate": "node db/migrate-to-postgres.mjs",
+    "db:setup": "npm run db:init && npm run db:migrate"
   },
   "dependencies": {
     "@copilotkit/react-core": "^1.10.5",
@@ -22,6 +25,7 @@
     "openai": "^4.104.0",
     "pdf-parse": "^1.1.1",
     "pdf-parse-fork": "^1.2.0",
+    "pg": "^8.13.1",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
