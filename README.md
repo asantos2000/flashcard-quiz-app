@@ -2,6 +2,8 @@
 
 <div align="center">
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/fdd26fa3-07d3-4c00-845d-dc39671486b6/deploy-status)](https://app.netlify.com/projects/insightly-app/deploys)
+
 ![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?style=for-the-badge&logo=next.js)
 ![React](https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38bdf8?style=for-the-badge&logo=tailwind-css)
