@@ -54,13 +54,3 @@ CREATE TRIGGER update_sessions_updated_at
 --   NOW()
 -- );
 
--- Show table structure
-\d sessions
-
--- Show indexes
-\di
-
--- Count records
-SELECT COUNT(*) FROM sessions;
-
-COMMIT;
