@@ -1031,6 +1031,9 @@ function FlashcardApp({ onDocumentChange }) {
               Claude Sonnet 4.5
             </a>
           </div>
+          <div className="mt-2 text-xs text-gray-500">
+            <span>v2025.10.03 (CalVer)</span>
+          </div>
         </div>
       </footer>
     </div>

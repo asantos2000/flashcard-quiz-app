@@ -1,6 +1,6 @@
 {
   "name": "flashcard-quiz-app",
-  "version": "0.1.0",
+  "version": "2025.10.03",
   "private": true,
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
@@ -9,7 +9,9 @@
     "lint": "eslint",
     "db:init": "node db/init.mjs",
     "db:migrate": "node db/migrate-to-postgres.mjs",
-    "db:setup": "npm run db:init && npm run db:migrate"
+    "db:setup": "npm run db:init && npm run db:migrate",
+    "version": "node scripts/version.mjs",
+    "version:git": "node scripts/version.mjs --git"
   },
   "dependencies": {
     "@copilotkit/react-core": "^1.10.5",
