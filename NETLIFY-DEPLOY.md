@@ -68,20 +68,9 @@ OPENAI_MODEL=gpt-4o
 DATABASE_URL=postgresql://user:password@host:port/database
 ```
 
-## � Configurar PostgreSQL para Produção (OBRIGATÓRIO)
+## 💾 Configurar PostgreSQL para Produção (OBRIGATÓRIO)
 
 Escolha uma das opções abaixo para ter persistência de dados:
-
-- [ ] Criar conta na Netlify
-- [ ] Conectar repositório GitHub
-- [ ] Configurar `OPENAI_API_KEY`
-- [ ] Configurar `OPENAI_MODEL`
-- [ ] Fazer deploy
-- [ ] Testar a aplicação
-
-## 💾 Para Persistência de Dados (Produção)
-
-Se você precisa de persistência de sessões, considere estas alternativas:
 
 ### Opção A: Supabase (PostgreSQL)
 - ✅ Free tier generoso
@@ -95,13 +84,7 @@ Se você precisa de persistência de sessões, considere estas alternativas:
 - ✅ Escalável
 - 📚 [Guia Neon](https://neon.tech/docs)
 
-### Opção C: Railway/Render (com DuckDB)
-- ✅ Filesystem persistente
-- ✅ Mantém DuckDB funcionando
-- 💰 ~$5/mês
-- 📚 Ver [DEPLOY-GUIDE.md](./DEPLOY-GUIDE.md)
-
-## � Troubleshooting
+## 🐛 Troubleshooting
 
 ### Erro: "Failed to connect to database"
 **Solução**: 

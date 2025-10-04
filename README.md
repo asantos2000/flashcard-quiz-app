@@ -169,6 +169,8 @@ graph LR
 - **Auto-save** - Sistema automático de salvamento de flashcards e quizzes
 - **Connection Pooling** - Gerenciamento eficiente de conexões com o banco
 
+> 📊 **[Ver Modelo de Dados Completo](./db/DATA-MODEL.md)** - Diagrama ER, estrutura de tabelas, queries e mais
+
 ### Ferramentas de Desenvolvimento
 - **[ESLint](https://eslint.org/)** - Linter para JavaScript
 - **[PostCSS](https://postcss.org/)** - Processador CSS
@@ -457,15 +459,27 @@ flashcard-quiz-app/
 │   │   │   └── route.js          # Extração de texto de PDFs
 │   │   ├── generate-flashcards/
 │   │   │   └── route.js          # Geração de flashcards com IA
-│   │   └── generate-quiz/
-│   │       └── route.js          # Geração de quizzes com IA
+│   │   ├── generate-quiz/
+│   │   │   └── route.js          # Geração de quizzes com IA
+│   │   └── sessions/
+│   │       └── route.js          # CRUD de sessões no PostgreSQL
 │   ├── components/
 │   │   └── FlashcardApp.jsx      # Componente principal com gestão de sessões
 │   ├── favicon.ico
 │   ├── globals.css               # Estilos globais + Tailwind
 │   ├── layout.js                 # Layout raiz do Next.js
 │   └── page.jsx                  # Página inicial com CopilotKit provider
+├── db/
+│   ├── DATA-MODEL.md             # 📊 Diagrama ER e documentação do modelo
+│   ├── schema.sql                # Schema PostgreSQL
+│   ├── init.mjs                  # Script de inicialização do DB
+│   └── README.md                 # Guia do banco de dados
 ├── public/                       # Arquivos estáticos
+│   ├── favicon.svg               # Favicon personalizado (livro)
+│   └── favicon-32x32.svg         # Favicon 32x32
+├── scripts/
+│   ├── version.mjs               # Script de versionamento
+│   └── tag-release.mjs           # Script de criação de tags Git
 ├── .env.local                    # Variáveis de ambiente (não commitar!)
 ├── .gitignore
 ├── eslint.config.mjs             # Configuração do ESLint

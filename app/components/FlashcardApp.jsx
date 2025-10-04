@@ -34,7 +34,7 @@ function FlashcardApp({ onDocumentChange }) {
     }
   }, [file, onDocumentChange]);
 
-  // Load saved sessions from DuckDB on mount
+  // Load saved sessions from PostgreSQL on mount
   useEffect(() => {
     if (isClient && typeof window !== 'undefined') {
       loadSavedSessions();
@@ -74,7 +74,7 @@ function FlashcardApp({ onDocumentChange }) {
     };
   }, [showHelp]);
 
-  // Save session to DuckDB via API
+  // Save session to PostgreSQL via API
   const saveSession = async (sessionData) => {
     try {
       const response = await fetch('/api/sessions', {
@@ -141,7 +141,7 @@ function FlashcardApp({ onDocumentChange }) {
     setShowResults(false);
   };
 
-  // Delete a saved session from DuckDB via API
+  // Delete a saved session from PostgreSQL via API
   const deleteSession = async (sessionId) => {
     try {
       const response = await fetch(`/api/sessions?id=${sessionId}`, {

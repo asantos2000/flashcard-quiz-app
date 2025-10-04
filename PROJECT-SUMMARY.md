@@ -248,7 +248,7 @@ netlify env:set OPENAI_API_KEY "sk-..."
 
 **Tecnologias:**
 - ✅ Next.js 15 + React 19
-- ✅ PostgreSQL (removido DuckDB)
+- ✅ PostgreSQL com Neon
 - ✅ CopilotKit self-hosted
 - ✅ Tailwind CSS v4
 

@@ -1,8 +1,14 @@
 # 🐘 PostgreSQL Setup
 
-Guia completo para configurar PostgreSQL local e migrar dados do DuckDB.
+Guia completo para configurar PostgreSQL local e em produção.
 
-## 🚀 Quick Start
+## � Documentação
+
+- 📊 **[Modelo de Dados (DATA-MODEL.md)](./DATA-MODEL.md)** - Diagrama ER e estrutura completa
+- 🗄️ **[Schema SQL (schema.sql)](./schema.sql)** - Script de criação das tabelas
+- 🔧 **[Inicialização (init.mjs)](./init.mjs)** - Script de setup inicial
+
+## �🚀 Quick Start
 
 ```bash
 # 1. Instalar dependências
@@ -14,20 +20,18 @@ docker-compose up -d
 # 3. Inicializar banco de dados
 npm run db:init
 
-# 4. (Opcional) Migrar dados do DuckDB
-npm run db:migrate
-
-# 5. Iniciar aplicação
+# 4. Iniciar aplicação
 npm run dev
 ```
 
 ## 📦 Estrutura de Arquivos
 
 ```
+```
 db/
+├── DATA-MODEL.md           # 📊 Diagrama ER e documentação completa
 ├── schema.sql              # Schema do banco de dados
-├── init.mjs                # Script de inicialização
-└── migrate-to-postgres.mjs # Script de migração DuckDB → PostgreSQL
+└── init.mjs                # Script de inicialização
 ```
 
 ## 🔧 Scripts Disponíveis
@@ -37,12 +41,6 @@ Inicializa o banco de dados PostgreSQL:
 - Cria tabela `sessions`
 - Cria índices para performance
 - Cria trigger para auto-update de `updated_at`
-
-### `npm run db:migrate`
-Migra dados existentes do DuckDB para PostgreSQL:
-- Lê todos os registros de `study-sessions.db`
-- Insere no PostgreSQL
-- Usa `ON CONFLICT` para evitar duplicatas
 
 ### `npm run db:setup`
 Executa `db:init` + `db:migrate` automaticamente
@@ -147,42 +145,7 @@ CREATE TRIGGER update_sessions_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 ```
 
-## 🔄 Migração DuckDB → PostgreSQL
-
-Se você já tem dados no DuckDB:
-
-```bash
-# 1. Garantir que study-sessions.db existe
-ls study-sessions.db
-
-# 2. Inicializar PostgreSQL
-npm run db:init
-
-# 3. Migrar dados
-npm run db:migrate
-
-# Output esperado:
-# 🔄 Migração DuckDB → PostgreSQL
-# 
-# 📂 Fonte: study-sessions.db
-# 🎯 Destino: postgresql://postgres:****@localhost:5432/flashcards
-# 
-# 📖 Lendo dados do DuckDB...
-# ✅ 5 registros lidos
-# 
-# 🔌 Conectando ao PostgreSQL...
-# ✅ Conectado!
-# 
-# 💾 Inserindo registros...
-#   ✅ Inseridos: 5/5
-# 
-# 📊 Resumo:
-#   ✅ Inseridos: 5
-#   ⚠️  Ignorados: 0
-#   📈 Total no PostgreSQL: 5
-# 
-# 🎉 Migração concluída com sucesso!
-```
+Para mais detalhes sobre o modelo de dados, consulte [DATA-MODEL.md](./DATA-MODEL.md).
 
 ## 🧪 Testes
 
@@ -263,9 +226,6 @@ docker-compose up -d
 
 # Recriar schema
 npm run db:init
-
-# (Opcional) Migrar dados
-npm run db:migrate
 ```
 
 ## 🌐 Deploy em Produção
@@ -317,7 +277,6 @@ DATABASE_URL="postgresql://prod-url" npm run db:init
 - [ ] `npm install` executado (instala `pg`)
 - [ ] `DATABASE_URL` configurado no `.env.local`
 - [ ] `npm run db:init` executado
-- [ ] `npm run db:migrate` executado (se tiver dados DuckDB)
 - [ ] `npm run dev` funciona
 - [ ] Consegue criar/ler sessões
 - [ ] PgAdmin acessível (opcional)
